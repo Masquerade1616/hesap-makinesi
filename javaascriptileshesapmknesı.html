@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* reset html */
+        *{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html{
+            height: 100%;
+        }
+        table{
+            background-color: gray;
+            border:  2px solid black;
+            border-spacing: 10px;
+            margin: auto;
+            margin-top: 80px;
+            text-align: center;
+        }
+        table .btn{
+            width: 80px;
+            color: black;
+            background-color: rgb(190, 187, 187);
+            line-height: 300%;
+            font-size: 150%;
+
+
+        }
+        .btn:hover{
+            cursor: pointer;
+            background-color: wheat;
+
+        }
+        #işlem ,#gösterge{
+            padding: 2%;
+            background-color: white;
+            text-align: right;
+        }
+        #işlem{
+            height: 50px;
+            font-size: 200%;
+            line-height: 40px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="içerik">
+        <table>
+            <tr>
+                <td colspan="5" id="işlem">0</td>
+            </tr>
+            <tr>
+                <td colspan="5" id="gösterge"></td>
+            </tr>
+            <tr>
+
+                <td class="btn rakam">7</td>
+                <td class="btn rakam">8</td>
+                <td class="btn rakam">9</td>
+                <td class="btn opr">/</td>
+                <td class="btn btnCE">CE</td>
+
+            </tr>
+            <tr>
+
+                <td class="btn rakam">4</td>
+                <td class="btn rakam">5</td>
+                <td class="btn rakam">6</td>
+                <td class="btn opr">*</td>
+                <td class="btn btnC">C</td>
+
+            </tr>
+            <tr>
+
+                <td class="btn rakam">1</td>
+                <td class="btn rakam">2</td>
+                <td class="btn rakam">3</td>
+                <td class="btn opr">-</td>
+                <td rowspan="2" class="btn eşit">=</td>
+
+            </tr>
+            <tr>
+                <td colspan="2" class="btn rakam">0</td>
+                <td class="btn nokta">.</td>
+                <td class="btn opr">+</td>
+
+            </tr>
+        </table>
+    </div>
+
+
+
+
+
+
+    
+    
+    <script>
+        //genel degişkenler
+
+        let durum = false, opt = "" , sonuc = 0;
+
+        //nesneleri oluşturucaz
+
+        // query selector ==> all tüm hepsi seçildiginde anlamını taşır
+        // queryselector ==> teklı ıfadelerde kullanılır sadece bunda işlem yap demektır anlamıdır yanı
+
+
+        rakam = document.querySelectorAll(".rakam");  //rakamlar
+
+        işlem = document.querySelector("#işlem");      // gösterge paneli
+        
+        opr = document.querySelectorAll(".opr")    // işlem butonlarım
+        
+        gösterge = document.querySelector("#gösterge");
+
+        btnC = document.querySelector(".btnC");
+
+        btnCE = document.querySelector(".btnCE");
+
+        eşit = document.querySelector(".eşit");
+
+        nokta = document.querySelector(".nokta");
+
+        //foreach ==> herhangi birine basıldıgında anlamına gelir dizi görevi görür
+
+        // text content inputun içindeki degeri alıyoruz 
+
+        // ben artık bunu rakam diye degilde element diye çagırıcam
+        rakam.forEach(function(element){
+
+            element.onclick=function(){
+
+                //baştaki sifiri kaldırmak için
+
+                if(işlem.textContent==0 || durum){
+                    işlem.textContent="";
+
+                }
+                işlem.textContent +=this.textContent;
+                durum = false;
+            }
+
+        });
+
+
+        // herhangi birine tıklandıgında elemente git
+
+        opr.forEach(function(element){
+            element.onclick=function(){
+                durum = true;
+
+
+                var opr = this.textContent;
+
+                //gösterge paneline yazdırma
+
+                gösterge.textContent=gösterge.textContent+" "+ işlem.textContent + " "+ opr;
+
+                // sonucu yazdırma işlemi 
+                switch(opt){
+
+                    case "+": işlem.textContent = (sonuc + Number(işlem.textContent));break;
+
+                    case "-": işlem.textContent = (sonuc - Number(işlem.textContent));break;
+
+                    case "*": işlem.textContent = (sonuc * Number(işlem.textContent));break;
+
+                    case "/": işlem.textContent = (sonuc / Number(işlem.textContent));break;
+
+                    default:break;   // default switch i bitirir break kırar
+                    
+                }
+                sonuc = Number(işlem.textContent);
+                opt = opr;
+            }
+        });
+
+        btnC.onclick=function(){
+            işlem.textContent = "0";
+
+        }
+        btnCE.onclick=function(){
+            işlem.textContent = " 0 ";
+            gösterge.textContent = " ";
+            sonuc = 0;
+            opt = " ";
+        }
+        eşit.onclick=function(){
+            gösterge.textContent = "";  // içi boş mu kontrol edıyor
+
+            durum = true;  // durum dogrumu dogruysa swich içerisine girmez direk sonuca girer
+
+
+            switch(opt){
+
+            case "+": işlem.textContent = (sonuc + Number(işlem.textContent));break;
+
+            case "-": işlem.textContent = (sonuc - Number(işlem.textContent));break;
+
+            case "*": işlem.textContent = (sonuc * Number(işlem.textContent));break;
+
+            case "/": işlem.textContent = (sonuc / Number(işlem.textContent));break;
+
+            default:break;   // default switch i bitirir break kırar
+
+            }
+            sonuc = Number(işlem.textContent);
+            işlem.textContent = sonuc;
+            sonuc = 0;
+            opt = "";
+        }
+
+        nokta.onclick=function(){
+            if(!durum && !işlem.textContent.includes(".")){   //durum hatalı degilse ve başlangıçta nokta yoksa
+                işlem.textContent += ".";
+
+            }
+            else if(durum){
+                işlem.textContent = "0";
+            }
+        }
+         
+        
+
+
+        
+
+
+    </script>
+</body>
+</html>
